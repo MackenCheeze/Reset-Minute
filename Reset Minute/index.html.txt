@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reset Minute</title>
+
+<style>
+
+/* ===== COSMIC BACKGROUND ===== */
+
+body {
+margin:0;
+background:
+radial-gradient(circle at 30% 20%, rgba(40,80,160,0.25), transparent 40%),
+radial-gradient(circle at 70% 80%, rgba(0,140,255,0.15), transparent 50%),
+radial-gradient(circle at center, #070b14 0%, #03060d 70%);
+color:#fff;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+text-align:center;
+overflow:hidden;
+}
+
+body::after{
+content:"";
+position:absolute;
+inset:0;
+background-image:radial-gradient(white 1px, transparent 1px);
+background-size:60px 60px;
+opacity:.04;
+animation:stars 40s linear infinite;
+}
+
+@keyframes stars{
+from{transform:translateY(0)}
+to{transform:translateY(-200px)}
+}
+
+.container{max-width:500px;padding:20px;position:relative;z-index:2;}
+
+h1{font-size:42px;margin-bottom:10px;font-weight:600;}
+.tagline{font-size:18px;letter-spacing:1px;margin-bottom:30px;opacity:.8;}
+.description{font-size:16px;margin-bottom:40px;opacity:.7;}
+
+button{
+padding:14px 40px;
+font-size:18px;
+background:#fff;
+color:#000;
+border:none;
+cursor:pointer;
+margin-top:15px;
+}
+
+button:hover{opacity:.85;}
+
+.skip{background:transparent;color:#aaa;font-size:14px;}
+.skip:hover{color:#fff;}
+
+.hidden{display:none;}
+
+input{
+padding:12px;
+width:80%;
+background:#111827;
+border:1px solid #1f2937;
+color:white;
+margin-top:20px;
+font-size:14px;
+}
+
+.subtle{
+margin-top:15px;
+font-size:13px;
+opacity:.4;
+}
+
+/* NEW: BREATH SELECT */
+select{
+padding:10px;
+margin-top:15px;
+background:#111827;
+color:white;
+border:1px solid #1f2937;
+}
+
+/* COUNTDOWN */
+
+.countdown{
+font-size:90px;
+font-weight:600;
+margin-top:10px;
+opacity:0;
+transform:scale(.8);
+transition:.4s;
+}
+
+.countdown.show{
+opacity:1;
+transform:scale(1);
+}
+
+/* BLOB */
+
+.breath-wrapper{
+width:300px;
+height:300px;
+margin:30px auto;
+position:relative;
+}
+
+#blobCanvas{
+width:300px;
+height:300px;
+}
+
+/* SMALL RING */
+
+.progress-ring{
+position:fixed;
+top:20px;
+right:20px;
+width:80px;
+height:80px;
+opacity:0;
+transition:opacity .5s ease;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:16px;
+}
+
+svg{
+position:absolute;
+top:0;
+left:0;
+}
+
+svg circle{
+fill:none;
+stroke:rgba(0,180,255,.6);
+stroke-width:4;
+transform:rotate(-90deg);
+transform-origin:50% 50%;
+}
+
+/* HAMBURGER MENU */
+
+.menu-btn{
+position:fixed;
+top:20px;
+right:20px;
+z-index:999;
+width:40px;
+height:30px;
+cursor:pointer;
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+}
+
+.menu-btn div{
+height:3px;
+background:white;
+opacity:0.8;
+border-radius:2px;
+}
+
+.dropdown{
+position:fixed;
+top:60px;
+right:20px;
+background:#0b1220;
+border:1px solid #1f2937;
+padding:10px;
+display:none;
+flex-direction:column;
+gap:10px;
+z-index:999;
+}
+
+.dropdown button{
+background:transparent;
+color:white;
+text-align:left;
+padding:5px 10px;
+font-size:14px;
+}
+
+/* PAGES */
+
+.page{
+position:absolute;
+inset:0;
+display:none;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+padding:20px;
+z-index:10;
+background:
+radial-gradient(circle at 30% 20%, rgba(40,80,160,0.25), transparent 40%),
+radial-gradient(circle at 70% 80%, rgba(0,140,255,0.15), transparent 50%),
+radial-gradient(circle at center, #070b14 0%, #03060d 70%);
+}
+
+.about-img{
+width:120px;
+height:120px;
+border-radius:50%;
+object-fit:cover;
+margin-bottom:20px;
+border:2px solid rgba(255,255,255,0.2);
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- MENU -->
+<div class="menu-btn" onclick="toggleMenu()">
+<div></div>
+<div></div>
+<div></div>
+</div>
+
+<div class="dropdown" id="dropdown">
+<button onclick="showPage('about')">About</button>
+<button onclick="showPage('faq')">FAQ</button>
+<button onclick="showPage('homePage')">Home</button>
+</div>
+
+<!-- ABOUT -->
+<div class="page" id="aboutPage">
+<img src="assets/profile.jpg" class="about-img">
+<h1>About</h1>
+<p>
+Hello there, my name is Keaton Brown, by trade I am an electrician, but I like to try to learn as much as I can. I wanted to challenge myself and make a website. The first step in doing that was coming up with an idea. While in college I found myself getting distracted and losing focus on the tasks at hand. I started to do research and found some breathing exercises that helped me to reset and refocus on what I had to do. This website is based on that research, and I found that it really helped me to lock in and focus on my daily tasks. I use this method almost every day, and I hope that it will be able to help others as well.
+</p>
+<button onclick="showPage('homePage')">Back</button>
+</div>
+
+<!-- FAQ -->
+<div class="page" id="faqPage">
+<h1>FAQ</h1>
+<p><b>What is this?</b><br>A 60-second reset + focus tool.</p>
+<button onclick="showPage('homePage')">Back</button>
+</div>
+
+<div class="container" id="home">
+<h1>Reset Minute</h1>
+<div class="tagline">Pause. Reset. Begin.</div>
+<div class="description">
+A calm reset for your nervous system and focus.
+</div>
+
+<!-- NEW SELECT -->
+<select id="breathSelect">
+<option value="5-0-5">5 Inhale / 5 Exhale</option>
+<option value="4-7-8">4 Inhale / 7 Hold / 8 Exhale</option>
+</select>
+
+<button onclick="startReset()">Start</button>
+<div class="subtle">60 seconds. No distractions.</div>
+</div>
+
+<div class="container hidden" id="countdownScreen">
+<div>Your minute starts in</div>
+<div class="countdown" id="countNumber">3</div>
+</div>
+
+<div class="container hidden" id="reset">
+<div class="breath-wrapper">
+<canvas id="blobCanvas"></canvas>
+</div>
+<div id="resetText">Inhale</div>
+</div>
+
+<div class="progress-ring" id="ring">
+<svg width="80" height="80">
+<circle r="30" cx="40" cy="40"
+stroke-dasharray="188"
+stroke-dashoffset="188"></circle>
+</svg>
+<div id="ringTimer">60</div>
+</div>
+
+<div class="container hidden" id="focus">
+
+<div id="focusControls">
+<div>You control your next 10 minutes.</div>
+<div style="margin-top:10px;">Choose one small action.</div>
+
+<input id="taskInput" type="text" placeholder="Type the smallest next step..." />
+
+<br>
+
+<button onclick="startFocus()">Begin 5 Minutes</button>
+<button class="skip" onclick="skipFocus()">Skip</button>
+</div>
+
+<div id="timer" style="margin-top:20px;"></div>
+<div id="finishText"></div>
+
+<button id="homeBtn" class="hidden" onclick="goHome()">Reset Minute</button>
+
+</div>
+
+<script>
+
+let resetTimeout, countdown, breathTimeout;
+let progressCircle = document.querySelector("svg circle");
+let ring = document.getElementById("ring");
+
+/* NEW BREATH SETTINGS */
+let inhale = 5, hold = 0, exhale = 5;
+
+/* MENU */
+function toggleMenu(){
+let d=document.getElementById("dropdown");
+d.style.display = d.style.display==="flex" ? "none" : "flex";
+}
+
+function showPage(page){
+document.getElementById("dropdown").style.display="none";
+
+document.getElementById("aboutPage").style.display="none";
+document.getElementById("faqPage").style.display="none";
+document.getElementById("home").style.display="none";
+document.getElementById("countdownScreen").style.display="none";
+document.getElementById("reset").style.display="none";
+document.getElementById("focus").style.display="none";
+
+if(page==="about") document.getElementById("aboutPage").style.display="flex";
+if(page==="faq") document.getElementById("faqPage").style.display="flex";
+if(page==="homePage") document.getElementById("home").style.display="block";
+}
+
+/* AUDIO (unchanged) */
+let ambientCtx, gainNode, oscA, oscB, sub;
+function startAmbient(){ambientCtx=new(window.AudioContext||window.webkitAudioContext)();gainNode=ambientCtx.createGain();gainNode.gain.setValueAtTime(0.00001,ambientCtx.currentTime);gainNode.connect(ambientCtx.destination);oscA=ambientCtx.createOscillator();oscA.type="sine";oscA.frequency.value=55;oscB=ambientCtx.createOscillator();oscB.type="sine";oscB.frequency.value=58;sub=ambientCtx.createOscillator();sub.type="sine";sub.frequency.value=28;oscA.connect(gainNode);oscB.connect(gainNode);sub.connect(gainNode);oscA.start();oscB.start();sub.start();gainNode.gain.exponentialRampToValueAtTime(0.12,ambientCtx.currentTime+4);}
+function stopAmbient(){if(gainNode){gainNode.gain.exponentialRampToValueAtTime(0.00001,ambientCtx.currentTime+2);}if(oscA)oscA.stop(ambientCtx.currentTime+2.2);if(oscB)oscB.stop(ambientCtx.currentTime+2.2);if(sub)sub.stop(ambientCtx.currentTime+2.2);}
+
+/* BEEP */
+function playBeep(){let ctx=new(window.AudioContext||window.webkitAudioContext)();let osc=ctx.createOscillator();let gain=ctx.createGain();osc.type="sine";osc.frequency.setValueAtTime(432,ctx.currentTime);osc.connect(gain);gain.connect(ctx.destination);gain.gain.setValueAtTime(0.00001,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(0.28,ctx.currentTime+0.18);gain.gain.exponentialRampToValueAtTime(0.00001,ctx.currentTime+1.1);osc.start();osc.stop(ctx.currentTime+1.1);}
+
+/* BUZZER */
+function playBuzzer(){let ctx=new(window.AudioContext||window.webkitAudioContext)();function ding(t){let o=ctx.createOscillator();let g=ctx.createGain();o.type="sine";o.frequency.setValueAtTime(880,ctx.currentTime+t);o.connect(g);g.connect(ctx.destination);g.gain.setValueAtTime(0.0001,ctx.currentTime+t);g.gain.exponentialRampToValueAtTime(0.4,ctx.currentTime+t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+t+0.6);o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+0.6);}ding(0);ding(0.4);ding(0.8);}
+
+/* COUNTDOWN */
+function startReset(){
+
+let val = document.getElementById("breathSelect").value;
+let parts = val.split("-");
+inhale = parseInt(parts[0]);
+hold = parseInt(parts[1]);
+exhale = parseInt(parts[2]);
+
+document.querySelector(".menu-btn").style.display="none";
+document.getElementById("dropdown").style.display="none";
+
+document.getElementById("home").classList.add("hidden");
+document.getElementById("countdownScreen").classList.remove("hidden");
+
+let number=document.getElementById("countNumber");
+let count=3;
+
+number.innerText=count;
+number.classList.add("show");
+
+ring.style.opacity = 0;
+
+playBeep();
+
+let interval=setInterval(()=>{
+number.classList.remove("show");
+setTimeout(()=>{
+count--;
+if(count>0){
+number.innerText=count;
+number.classList.add("show");
+playBeep();
+}else{
+clearInterval(interval);
+setTimeout(()=>{
+document.getElementById("countdownScreen").classList.add("hidden");
+beginReset();
+},400);
+}
+},200);
+},1000);
+}
+
+/* RESET */
+function beginReset(){
+
+document.querySelector(".menu-btn").style.display="none";
+document.getElementById("dropdown").style.display="none";
+
+document.getElementById("reset").classList.remove("hidden");
+
+startAmbient();
+
+ring.style.opacity = 0.6;
+
+let text=document.getElementById("resetText");
+let ringTimer=document.getElementById("ringTimer");
+
+let totalTime=60;
+let startTime=Date.now();
+
+let radius=progressCircle.r.baseVal.value;
+let circumference=2*Math.PI*radius;
+progressCircle.style.strokeDasharray=circumference;
+
+function updateProgress(){
+let elapsed=(Date.now()-startTime)/1000;
+let offset=circumference-(elapsed/totalTime)*circumference;
+progressCircle.style.strokeDashoffset=offset;
+let remaining = Math.ceil(totalTime - elapsed);
+ringTimer.innerText = remaining > 0 ? remaining : 0;
+}
+
+const canvas = document.getElementById('blobCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = 300;
+canvas.height = 300;
+
+function getTime(){return (Date.now()-startTime)/1000;}
+
+const total = inhale + hold + exhale;
+
+function ease(x){return x < 0.5 ? 2*x*x : 1 - Math.pow(-2*x+2,2)/2;}
+
+function breath(t){
+t %= total;
+if(t < inhale) return ease(t / inhale);
+if(t < inhale + hold) return 1;
+return 1 - ease((t - inhale - hold) / exhale);
+}
+
+function getPhase(t){
+t%=total;
+if(t<inhale) return "Inhale";
+if(t<inhale+hold) return "Hold";
+return "Exhale";
+}
+
+function noise(a,t,s=1){
+return Math.sin(a*2+t)*6*s +
+Math.cos(a*3-t*0.7)*5*s +
+Math.sin(a*6+t*0.3)*3*s;
+}
+
+function blob(cx,cy,r,pts,t,s=1){
+ctx.beginPath();
+for(let i=0;i<=pts;i++){
+let a=(i/pts)*Math.PI*2;
+let rad=r+noise(a,t,s);
+let x=cx+Math.cos(a)*rad;
+let y=cy+Math.sin(a)*rad;
+i?ctx.lineTo(x,y):ctx.moveTo(x,y);
+}
+ctx.closePath();
+}
+
+const lines=[];
+for(let i=0;i<6;i++){
+lines.push({offset:Math.random()*10,speed:0.5+Math.random()*0.5,thickness:0.5+Math.random()*1.5,radius:80+i*5});
+}
+
+function drawLines(cx,cy,scale,t){
+lines.forEach((l,i)=>{
+ctx.save();
+ctx.translate(cx,cy);
+ctx.rotate(t*0.05*l.speed+i);
+ctx.beginPath();
+for(let j=0;j<=160;j++){
+let a=(j/160)*Math.PI*2;
+let r=(l.radius*scale)+noise(a,t+l.offset,0.4);
+let x=Math.cos(a)*r;
+let y=Math.sin(a)*r;
+j?ctx.lineTo(x,y):ctx.moveTo(x,y);
+}
+ctx.strokeStyle='rgba(180,200,255,0.15)';
+ctx.lineWidth=l.thickness;
+ctx.stroke();
+ctx.restore();
+});
+}
+
+function draw(){
+let t = getTime();
+ctx.clearRect(0,0,300,300);
+let cx=150,cy=150;
+let scale=0.5+breath(t)*0.6;
+
+text.innerText = getPhase(t);
+
+drawLines(cx,cy,scale,t);
+
+for(let i=0;i<3;i++){
+ctx.fillStyle='rgba(180,200,255,0.2)';
+blob(cx,cy,70*(scale-i*0.08),120,t+i*0.4,1-i*0.2);
+ctx.fill();
+}
+
+ctx.globalCompositeOperation='destination-out';
+blob(cx,cy,35*scale,120,t+0.6,0.5);
+ctx.fill();
+ctx.globalCompositeOperation='lighter';
+
+drawLines(cx,cy,scale*0.95,t);
+
+requestAnimationFrame(draw);
+}
+
+draw();
+
+resetTimeout=setInterval(()=>{
+updateProgress();
+let elapsed=(Date.now()-startTime)/1000;
+if(elapsed>=60){
+clearInterval(resetTimeout);
+document.querySelector(".menu-btn").style.display="block";
+stopAmbient();
+ring.style.opacity=0;
+document.getElementById("reset").classList.add("hidden");
+document.getElementById("focus").classList.remove("hidden");
+}
+},50);
+
+}
+
+/* FOCUS (unchanged) */
+function startFocus(){
+let time = 300;
+let timer = document.getElementById("timer");
+clearInterval(countdown);
+timer.style.display="block";
+countdown = setInterval(()=>{
+let m = Math.floor(time/60);
+let s = time % 60;
+timer.innerText = m + ":" + (s < 10 ? "0" : "") + s;
+time--;
+if(time < 0){
+clearInterval(countdown);
+finishFocus();
+}
+},1000);
+}
+
+function skipFocus(){clearInterval(countdown);finishFocus();}
+
+function finishFocus(){
+playBuzzer();
+document.getElementById("focusControls").style.display="none";
+document.getElementById("timer").style.display="none";
+document.getElementById("finishText").innerText =
+"The first 5 minutes are complete; the rest is up to you now.";
+document.getElementById("homeBtn").classList.remove("hidden");
+}
+
+function goHome(){
+document.querySelector(".menu-btn").style.display="block";
+clearInterval(countdown);
+clearTimeout(breathTimeout);
+clearInterval(resetTimeout);
+stopAmbient();
+document.getElementById("focus").classList.add("hidden");
+document.getElementById("reset").classList.add("hidden");
+document.getElementById("countdownScreen").classList.add("hidden");
+ring.style.opacity = 0;
+document.getElementById("home").classList.remove("hidden");
+document.getElementById("focusControls").style.display="block";
+document.getElementById("timer").style.display="block";
+document.getElementById("timer").innerText="";
+document.getElementById("finishText").innerText="";
+document.getElementById("homeBtn").classList.add("hidden");
+}
+
+</script>
+</body>
+</html>
