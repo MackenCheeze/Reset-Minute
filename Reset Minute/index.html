@@ -559,31 +559,5 @@ function skipFocus(){clearInterval(countdown);finishFocus();}
 
 function finishFocus(){
 playBuzzer();
-document.getElementById("focusControls").style.display="none";
-document.getElementById("timer").style.display="none";
-document.getElementById("finishText").innerText =
-"The first 5 minutes are complete; the rest is up to you now.";
-document.getElementById("homeBtn").classList.remove("hidden");
-}
 
-function goHome(){
-document.querySelector(".menu-btn").style.display="block";
-clearInterval(countdown);
-clearTimeout(breathTimeout);
-clearInterval(resetTimeout);
-stopAmbient();
-document.getElementById("focus").classList.add("hidden");
-document.getElementById("reset").classList.add("hidden");
-document.getElementById("countdownScreen").classList.add("hidden");
-ring.style.opacity = 0;
-document.getElementById("home").classList.remove("hidden");
-document.getElementById("focusControls").style.display="block";
-document.getElementById("timer").style.display="block";
-document.getElementById("timer").innerText="";
-document.getElementById("finishText").innerText="";
-document.getElementById("homeBtn").classList.add("hidden");
-}
-
-</script>
-</body>
 </html>
