@@ -232,6 +232,7 @@ border:2px solid rgba(255,255,255,0.2);
 <div class="dropdown" id="dropdown">
 <button onclick="showPage('about')">About</button>
 <button onclick="showPage('faq')">FAQ</button>
+<button onclick="showPage('music')">Music Options</button>
 <button onclick="showPage('homePage')">Home</button>
 </div>
 
@@ -249,6 +250,7 @@ Hello there, my name is Keaton Brown, by trade I am an electrician, but I like t
 <div class="page" id="faqPage">
 <h1>FAQ</h1>
 <p><b>What is this?</b><br>A 60-second reset + focus tool.</p>
+<p><b>Does this actually help?</b><br>Yes, focused breathing has been scientifically proven to help calm the nervous system</p>
 <button onclick="showPage('homePage')">Back</button>
 </div>
 
@@ -259,6 +261,40 @@ Hello there, my name is Keaton Brown, by trade I am an electrician, but I like t
 A calm reset for your nervous system and focus.
 </div>
 
+  <!-- MUSIC OPTIONS -->
+<div class="page" id="musicPage">
+<h1>Music Options</h1>
+
+<p>Select music for your breathing session.</p>
+
+<select id="musicSelect">
+<option value="">No Music</option>
+
+<option value="audio/rainforest.mp3">
+Rainforest
+</option>
+
+<option value="audio/classical.mp3">
+Ocean Waves
+</option>
+
+<option value="audio/meditation.mp3">
+Meditation
+</option>
+
+<option value="audio/space.mp3">
+Cosmic Ambience
+</option>
+
+</select>
+
+<br><br>
+
+<button onclick="showPage('homePage')">
+Save & Return
+</button>
+</div>
+  
 <!-- NEW SELECT -->
 <select id="breathSelect">
 <option value="5-0-5">5 Inhale / 5 Exhale</option>
@@ -313,9 +349,35 @@ stroke-dashoffset="188"></circle>
 
 <script>
 
+let breathingMusic = null;
 let resetTimeout, countdown, breathTimeout;
 let progressCircle = document.querySelector("svg circle");
 let ring = document.getElementById("ring");
+
+function startSelectedMusic(){
+
+let selected =
+document.getElementById("musicSelect").value;
+
+if(!selected) return;
+
+breathingMusic = new Audio(selected);
+
+breathingMusic.loop = true;
+breathingMusic.volume = 0.5;
+
+breathingMusic.play();
+}
+
+function stopSelectedMusic(){
+
+if(breathingMusic){
+breathingMusic.pause();
+breathingMusic.currentTime = 0;
+breathingMusic = null;
+}
+
+}
 
 /* NEW BREATH SETTINGS */
 let inhale = 5, hold = 0, exhale = 5;
@@ -328,7 +390,9 @@ d.style.display = d.style.display==="flex" ? "none" : "flex";
 
 function showPage(page){
 document.getElementById("dropdown").style.display="none";
-
+document.getElementById("musicPage").style.display="none";
+  if(page==="music")
+document.getElementById("musicPage").style.display="flex";
 document.getElementById("aboutPage").style.display="none";
 document.getElementById("faqPage").style.display="none";
 document.getElementById("home").style.display="none";
@@ -340,11 +404,6 @@ if(page==="about") document.getElementById("aboutPage").style.display="flex";
 if(page==="faq") document.getElementById("faqPage").style.display="flex";
 if(page==="homePage") document.getElementById("home").style.display="block";
 }
-
-/* AUDIO (unchanged) */
-let ambientCtx, gainNode, oscA, oscB, sub;
-function startAmbient(){ambientCtx=new(window.AudioContext||window.webkitAudioContext)();gainNode=ambientCtx.createGain();gainNode.gain.setValueAtTime(0.00001,ambientCtx.currentTime);gainNode.connect(ambientCtx.destination);oscA=ambientCtx.createOscillator();oscA.type="sine";oscA.frequency.value=55;oscB=ambientCtx.createOscillator();oscB.type="sine";oscB.frequency.value=58;sub=ambientCtx.createOscillator();sub.type="sine";sub.frequency.value=28;oscA.connect(gainNode);oscB.connect(gainNode);sub.connect(gainNode);oscA.start();oscB.start();sub.start();gainNode.gain.exponentialRampToValueAtTime(0.12,ambientCtx.currentTime+4);}
-function stopAmbient(){if(gainNode){gainNode.gain.exponentialRampToValueAtTime(0.00001,ambientCtx.currentTime+2);}if(oscA)oscA.stop(ambientCtx.currentTime+2.2);if(oscB)oscB.stop(ambientCtx.currentTime+2.2);if(sub)sub.stop(ambientCtx.currentTime+2.2);}
 
 /* BEEP */
 function playBeep(){let ctx=new(window.AudioContext||window.webkitAudioContext)();let osc=ctx.createOscillator();let gain=ctx.createGain();osc.type="sine";osc.frequency.setValueAtTime(432,ctx.currentTime);osc.connect(gain);gain.connect(ctx.destination);gain.gain.setValueAtTime(0.00001,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(0.28,ctx.currentTime+0.18);gain.gain.exponentialRampToValueAtTime(0.00001,ctx.currentTime+1.1);osc.start();osc.stop(ctx.currentTime+1.1);}
@@ -424,6 +483,9 @@ let offset=circumference-(elapsed/totalTime)*circumference;
 progressCircle.style.strokeDashoffset=offset;
 let remaining = Math.ceil(totalTime - elapsed);
 ringTimer.innerText = remaining > 0 ? remaining : 0;
+
+startSelectedMusic();
+startAmbient();
 }
 
 const canvas = document.getElementById('blobCanvas');
@@ -530,6 +592,7 @@ clearInterval(resetTimeout);
 document.querySelector(".menu-btn").style.display="block";
 stopAmbient();
 ring.style.opacity=0;
+stopSelectedMusic();
 document.getElementById("reset").classList.add("hidden");
 document.getElementById("focus").classList.remove("hidden");
 }
@@ -572,6 +635,7 @@ clearInterval(countdown);
 clearTimeout(breathTimeout);
 clearInterval(resetTimeout);
 stopAmbient();
+stopSelectedMusic();
 document.getElementById("focus").classList.add("hidden");
 document.getElementById("reset").classList.add("hidden");
 document.getElementById("countdownScreen").classList.add("hidden");
